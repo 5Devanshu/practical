@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Experiments for Practicals</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+    <!-- Framer Motion (optional, kept as in original) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.12.16/framer-motion.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <style>
+        /* Basic styles for active states and hiding content */
+        .topic-content {
+            display: none;
+        }
+        .topic-content.active {
+            display: block;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .topic-btn.active {
+            background-color: #4f46e5; /* Indigo-600 */
+            font-weight: bold;
+        }
+        .tab-btn.active {
+           background-color: #d1d5db; /* Gray-300 */
+           font-weight: bold;
+           border-bottom: 2px solid #6b7280; /* Gray-500 */
+        }
+        pre {
+            background-color: #282c34; /* Match atom-one-dark background */
+            padding: 1em;
+            border-radius: 0.5em;
+            margin-bottom: 1em;
+            overflow-x: auto;
+            color: #abb2bf; /* Default text color for atom-one-dark */
+        }
+        code.hljs {
+           background: none; /* Ensure code block inside pre doesn't override background */
+        }
+        /* Style for install command blocks */
+        .install-command {
+            background-color: #fefcbf; /* yellow-100 */
+            border-left: 4px solid #f59e0b; /* yellow-500 */
+            color: #92400e; /* yellow-700 */
+            padding: 1rem; /* p-4 */
+            margin-bottom: 1rem; /* mb-4 */
+            border-radius: 0.25rem; /* rounded */
+            font-size: 0.875rem; /* text-sm */
+        }
+        .install-command code {
+            background-color: #fef3c7; /* yellow-200 slightly darker */
+            padding: 0.1em 0.4em;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            color: #78350f; /* yellow-800 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+    <header class="bg-gradient-to-r from-purple-600 to-blue-500 text-white p-6 shadow-lg">
+        <div class="container mx-auto">
+            <h1 class="text-4xl font-bold mb-4 text-center animate-pulse">Hello Disha</h1>
+            <h2 class="text-2xl text-center">ML EXPERIMENTS FOR PRACTICALS</h2>
+        </div>
+    </header>
+
+    <main class="container mx-auto py-8 px-4">
+        <div class="bg-white rounded-lg shadow-xl p-6 mb-8">
+            <!-- Topic Buttons -->
+            <div class="flex flex-wrap mb-6 border-b border-gray-300 pb-4">
+                <button class="topic-btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mr-2 mb-2 transition duration-150 ease-in-out" data-topic="linear-regression">1. LINEAR REGRESSION</button>
+                <button class="topic-btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mr-2 mb-2 transition duration-150 ease-in-out" data-topic="logistic-regression">2. LOGISTIC REGRESSION</button>
+                <button class="topic-btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mr-2 mb-2 transition duration-150 ease-in-out" data-topic="svm">3. SUPPORT VECTOR MACHINE</button>
+                <button class="topic-btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mr-2 mb-2 transition duration-150 ease-in-out" data-topic="hebbian">4. HEBBIAN LEARNING</button>
+                <button class="topic-btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mr-2 mb-2 transition duration-150 ease-in-out" data-topic="perceptron">5. SINGLE LAYER PERCEPTRON</button>
+                <button class="topic-btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mr-2 mb-2 transition duration-150 ease-in-out" data-topic="anova">6. APPLICATIONS (ANOVA)</button>
+            </div>
+
+            <!-- Content Sections for Each Topic -->
+
+            <!-- LINEAR REGRESSION -->
+            <div id="linear-regression" class="topic-content">
+                <h2 class="text-2xl font-bold mb-4 text-gray-700">LINEAR REGRESSION</h2>
+                <div class="mb-6">
+                    <div class="flex mb-4 border-b border-gray-200">
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="lr-1">Without Dataset</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="lr-2">With Local Dataset</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg text-gray-700" data-tab="lr-3">With Online Dataset</button>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-b-lg rounded-r-lg shadow-inner">
+                        <div id="lr-1" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Linear Regression Without Dataset</h3>
+                            <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# Generate synthetic data
+np.random.seed(42)
+X = 2 * np.random.rand(100, 1)
+y = 4 + 3 * X + np.random.randn(100, 1) # y = 4 + 3x + noise
+
+# Create and train the model
+model = LinearRegression()
+model.fit(X, y)
+
+# Print results
+print(f"Intercept (theta_0): {model.intercept_[0]:.4f}") # Should be close to 4
+print(f"Coefficient (theta_1): {model.coef_[0][0]:.4f}") # Should be close to 3
+
+# Make predictions
+X_new = np.array([[0], [2]]) # Predict for x=0 and x=2
+y_pred = model.predict(X_new)
+print(f"Predictions for x=0 and x=2: {y_pred.flatten()}")
+
+# Plot the results
+plt.figure(figsize=(8, 6))
+plt.scatter(X, y, alpha=0.6, label='Generated Data')
+plt.plot(X_new, y_pred, 'r-', linewidth=2, label='Linear Regression Fit')
+plt.xlabel('X (Input Feature)')
+plt.ylabel('y (Target Variable)')
+plt.title('Linear Regression with Synthetic Data')
+plt.legend()
+plt.grid(True)
+plt.show()
+                            </code></pre>
+                        </div>
+                        <div id="lr-2" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Linear Regression With Local Dataset</h3>
+                             <p class="mb-2 text-sm text-gray-500">Note: This code expects a CSV file named 'facebook.csv' in the specified path. Please ensure the file exists or modify the path.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> Pandas, Scikit-learn, Matplotlib<br>
+                                <strong>Run in terminal:</strong> <code>pip install pandas scikit-learn matplotlib</code>
+                            </div>
+                            <pre><code class="language-python">
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+import os # Import os module
+
+# --- IMPORTANT: Modify this path to your actual file location ---
+file_path = r"C:\Users\Disha\OneDrive\Desktop\ml practical\facebook.csv"
+# --- OR put the facebook.csv file in the same directory as the HTML file ---
+# file_path = "facebook.csv"
+
+# Check if the file exists before trying to read it
+if not os.path.exists(file_path):
+    print(f"Error: The file '{file_path}' was not found.")
+    print("Please ensure the CSV file exists at the specified path or update the 'file_path' variable.")
+    # You might want to exit or handle this error more gracefully
+    # For this example, we'll just print the error.
+    data = pd.DataFrame() # Create an empty dataframe to avoid further errors
+else:
+    # Step 1: Load the data
+    print(f"Loading data from: {file_path}")
+    data = pd.read_csv(file_path)
+    print("Data loaded successfully. First 5 rows:")
+    print(data.head())
+
+    # Step 2: Define inputs (X) and output (y)
+    # Assuming 'YouTube' and 'Facebook' are predictor columns and 'Sales' is the target
+    if "YouTube" in data.columns and "Facebook" in data.columns and "Sales" in data.columns:
+        X = data[["YouTube", "Facebook"]]
+        y = data["Sales"]
+
+        # Step 3: Split into training and testing sets (80% train, 20% test)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        print(f"\nData split: {len(X_train)} training samples, {len(X_test)} testing samples.")
+
+        # Step 4: Create and train the model
+        model = LinearRegression()
+        model.fit(X_train, y_train)
+        print("\nModel trained.")
+        print(f"Intercept: {model.intercept_:.4f}")
+        print(f"Coefficients (YouTube, Facebook): {model.coef_}")
+
+        # Step 5: Predict on test data
+        y_pred = model.predict(X_test)
+
+        # Step 6: Evaluate the model
+        mse = mean_squared_error(y_test, y_pred)
+        r2 = r2_score(y_test, y_pred)
+        print(f"\nModel Evaluation:")
+        print(f"Mean Squared Error (MSE): {mse:.4f}")
+        print(f"R-squared (R²) Score: {r2:.4f}")
+
+
+        # Step 7: Scatter plot of actual vs predicted
+        plt.figure(figsize=(8, 6))
+        plt.scatter(y_test, y_pred, alpha=0.7, edgecolors='k')
+        # Add a line for perfect predictions (y=x)
+        plt.plot([min(y_test.min(), y_pred.min()), max(y_test.max(), y_pred.max())],
+                 [min(y_test.min(), y_pred.min()), max(y_test.max(), y_pred.max())],
+                 'r--', lw=2, label='Perfect Prediction')
+        plt.xlabel("Actual Sales")
+        plt.ylabel("Predicted Sales")
+        plt.title("Actual vs Predicted Sales")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+    else:
+        print("\nError: Required columns ('YouTube', 'Facebook', 'Sales') not found in the CSV.")
+
+                            </code></pre>
+                        </div>
+                        <div id="lr-3" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Linear Regression With Online Dataset</h3>
+                            <div class="install-command">
+                                <strong>Required Libraries:</strong> Pandas, NumPy, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install pandas numpy matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+# Using a dataset readily available in scikit-learn
+from sklearn.datasets import fetch_california_housing
+
+# Load the California Housing dataset
+print("Loading California Housing dataset from scikit-learn...")
+housing = fetch_california_housing()
+df = pd.DataFrame(housing.data, columns=housing.feature_names)
+df['PRICE'] = housing.target # The target is median house value in $100,000s
+
+print("Dataset Info:")
+print(df.info())
+print("\nFirst 5 rows:")
+print(df.head())
+print(f"\nFeatures: {housing.feature_names}")
+print(f"Target: Median House Value")
+
+# Select features and target
+# Let's use Median Income, Average Rooms, and House Age as features
+X = df[['MedInc', 'HouseAge', 'AveRooms']]
+y = df['PRICE']
+print("\nSelected Features: 'MedInc', 'HouseAge', 'AveRooms'")
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+print(f"\nData split: {len(X_train)} training samples, {len(X_test)} testing samples.")
+
+# Train the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+print("\nModel trained.")
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"\nCoefficients: {model.coef_}")
+print(f"Intercept: {model.intercept_:.4f}")
+print(f"\nModel Evaluation:")
+print(f"Mean Squared Error (MSE): {mse:.4f}")
+print(f"R-squared (R²) Score: {r2:.4f}")
+
+# Plot results: Actual vs Predicted
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, alpha=0.5, edgecolors='k')
+# Add a line for perfect predictions
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2, label='Perfect Prediction')
+plt.xlabel('Actual House Prices ($100,000s)')
+plt.ylabel('Predicted House Prices ($100,000s)')
+plt.title('California Housing Prices: Actual vs Predicted')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGISTIC REGRESSION -->
+            <div id="logistic-regression" class="topic-content">
+                <h2 class="text-2xl font-bold mb-4 text-gray-700">LOGISTIC REGRESSION</h2>
+                <div class="mb-6">
+                     <div class="flex mb-4 border-b border-gray-200">
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="log-1">Without Dataset</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="log-2">With Local Dataset</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg text-gray-700" data-tab="log-3">With Online Dataset</button>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-b-lg rounded-r-lg shadow-inner">
+                        <div id="log-1" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Logistic Regression Without Dataset</h3>
+                            <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.datasets import make_classification # Added to generate data
+
+# Generate synthetic binary classification data (more suitable than blobs for LogReg)
+np.random.seed(42)
+X, y = make_classification(n_samples=100, n_features=2, n_informative=2, n_redundant=0,
+                           n_clusters_per_class=1, flip_y=0.01, class_sep=1.5, random_state=42)
+
+
+# Create and train the model
+# solver='liblinear' is good for small datasets
+model = LogisticRegression(solver='liblinear', random_state=42)
+model.fit(X, y)
+
+# Print results
+print(f"Intercept: {model.intercept_[0]:.4f}")
+print(f"Coefficients: {model.coef_[0]}")
+
+# Make predictions
+y_pred = model.predict(X)
+accuracy = accuracy_score(y, y_pred)
+print(f"Accuracy: {accuracy:.4f}")
+
+# Confusion Matrix
+cm = confusion_matrix(y, y_pred)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=model.classes_)
+print("\nConfusion Matrix:")
+print(cm)
+
+# Plot the decision boundary and data points
+plt.figure(figsize=(10, 8))
+
+# Create a meshgrid for decision boundary visualization
+h = 0.02  # Step size in the mesh
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+# Predict classifications for each point in the meshgrid
+Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+# Plot the decision boundary using contourf
+plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.Paired)
+# Plot the data points, colored by their true class
+scatter = plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.Paired, edgecolors='k', s=60)
+
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.title(f'Logistic Regression Decision Boundary\nAccuracy: {accuracy:.4f}')
+plt.legend(handles=scatter.legend_elements()[0], labels=['Class 0', 'Class 1'])
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.show()
+
+# Plot confusion matrix
+disp.plot(cmap=plt.cm.Blues)
+plt.title('Confusion Matrix for Synthetic Data')
+plt.show()
+                            </code></pre>
+                        </div>
+                        <div id="log-2" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Logistic Regression With Local Dataset</h3>
+                             <p class="mb-2 text-sm text-gray-500">Note: This code expects a CSV file named 'logistic.csv' in the specified path. Please ensure the file exists or modify the path.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> Pandas, NumPy, Scikit-learn, Matplotlib, Seaborn<br>
+                                <strong>Run in terminal:</strong> <code>pip install pandas numpy scikit-learn matplotlib seaborn</code>
+                            </div>
+                            <pre><code class="language-python">
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+import seaborn as sns # Required for heatmap styling, though not strictly used by ConfusionMatrixDisplay
+
+# --- IMPORTANT: Modify this path to your actual file location ---
+file_path = r"C:\Users\Disha\OneDrive\Desktop\ml practical\logistic.csv"
+# ---------------------------------------------------------
+
+try:
+    # Step 1: Load the dataset (Customer Purchase Data)
+    data = pd.read_csv(file_path)
+
+    # Step 2: Convert data into a pandas DataFrame
+    df = pd.DataFrame(data)
+    print("Data loaded successfully. First 5 rows:")
+    print(df.head())
+
+    # Step 3: Define inputs (X) and output (y)
+    # Ensure these columns exist in your CSV
+    if 'CreditScore' not in df.columns or 'AnnualIncome' not in df.columns or 'LoanApproved' not in df.columns:
+        raise ValueError("Required columns ('CreditScore', 'AnnualIncome', 'LoanApproved') not found in the CSV.")
+
+    X = df[['CreditScore', 'AnnualIncome']]  # Features
+    y = df['LoanApproved']  # Target variable
+
+    # Step 4: Split the data into training and testing sets (80% train, 20% test)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    print(f"\nData split: {len(X_train)} training samples, {len(X_test)} testing samples.")
+
+    # Step 5: Create and train the logistic regression model
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
+    print("\nModel trained.")
+
+    # Step 6: Predict on the test set
+    y_pred = model.predict(X_test)
+
+    # Step 7: Create confusion matrix and display it as a heatmap
+    cm = confusion_matrix(y_test, y_pred)
+    print("\nConfusion Matrix:")
+    print(cm)
+    cmd = ConfusionMatrixDisplay(cm, display_labels=['Loan not approved', 'Loan approved'])
+    cmd.plot(cmap='Blues')
+    plt.title('Confusion Matrix Heatmap')
+    plt.show()
+
+    # Step 8: Plot the Sigmoid function (Logistic Regression curve approximation)
+    print("\nPlotting approximate Sigmoid function shape...")
+    # --- Simplification for 2 Features ---
+    # Create a range based on a linear combination of the two selected features.
+    # This visualizes the sigmoid shape, not the true multi-dimensional boundary.
+    feature1_range = X['CreditScore']
+    feature2_range = X['AnnualIncome']
+
+    combined_feature_range = np.linspace(
+        (model.coef_[0][0]*feature1_range + model.coef_[0][1]*feature2_range).min(),
+        (model.coef_[0][0]*feature1_range + model.coef_[0][1]*feature2_range).max(),
+        100
+    )
+
+    # Calculate z using the *range* and the intercept
+    z = combined_feature_range + model.intercept_[0]
+    sigmoid = 1 / (1 + np.exp(-z))
+
+    # Plot the sigmoid function
+    plt.figure(figsize=(8, 5))
+    plt.plot(combined_feature_range, sigmoid, label="Sigmoid Function Shape", color='r')
+    plt.xlabel('Linear Combination (CreditScore & Annual Income) (Approx.)')
+    plt.ylabel('Probability of Loan Approved')
+    plt.title('Sigmoid Function Shape Visualization (Local Data)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+    # --- End Simplification ---
+
+except FileNotFoundError:
+    print(f"\nError: The file '{file_path}' was not found.")
+    print("Please ensure the CSV file exists at the specified path or update the 'file_path' variable.")
+except ValueError as ve:
+    print(f"\nError: {ve}")
+except Exception as e:
+    print(f"\nAn unexpected error occurred: {e}")
+
+                            </code></pre>
+                        </div>
+                        <div id="log-3" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Logistic Regression With Online Dataset</h3>
+                            <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Pandas, Matplotlib, Seaborn, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy pandas matplotlib seaborn scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_breast_cancer # A common benchmark dataset
+
+# Load the breast cancer dataset from scikit-learn
+print("Loading Breast Cancer Wisconsin dataset from scikit-learn...")
+cancer = load_breast_cancer()
+df = pd.DataFrame(cancer.data, columns=cancer.feature_names)
+df['target'] = cancer.target # 0: Malignant, 1: Benign
+
+# Display dataset information
+print("Dataset Info:")
+#print(df.info()) # Can be verbose
+print(f"\nShape: {df.shape}")
+print(f"Target names: {cancer.target_names}") # ['malignant', 'benign']
+print("\nFirst 5 rows:")
+print(df.head())
+print("\nTarget distribution:")
+print(df['target'].value_counts())
+
+# Select features and target
+X = df.drop('target', axis=1)
+y = df['target']
+
+# Split the data into training and testing sets (70% train, 30% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+print(f"\nData split: {len(X_train)} training samples, {len(X_test)} testing samples.")
+
+# Scale the features (very important for logistic regression and many other algorithms)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+print("\nFeatures scaled using StandardScaler.")
+
+# Train the logistic regression model
+# Increase max_iter if it fails to converge
+model = LogisticRegression(max_iter=10000, random_state=42, solver='liblinear')
+model.fit(X_train_scaled, y_train)
+print("\nLogistic Regression model trained.")
+
+# Make predictions
+y_pred = model.predict(X_test_scaled)
+y_pred_proba = model.predict_proba(X_test_scaled)[:, 1] # Probability of being benign (class 1)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nModel Evaluation:")
+print(f"Accuracy: {accuracy:.4f}")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=cancer.target_names))
+
+# Create and display confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=cancer.target_names)
+
+plt.figure(figsize=(8, 6))
+disp.plot(cmap=plt.cm.Blues, ax=plt.gca()) # Use plt.gca() to plot on the current axes
+plt.title('Confusion Matrix - Breast Cancer Prediction')
+plt.grid(False)
+plt.show()
+
+# Feature importance (coefficients can give an idea, but be careful with interpretation)
+# Use absolute values for magnitude, sign indicates direction of relationship with log-odds
+coefficients = pd.DataFrame(
+    {'Feature': cancer.feature_names, 'Coefficient': model.coef_[0]}
+)
+coefficients['Abs_Coefficient'] = np.abs(coefficients['Coefficient'])
+coefficients = coefficients.sort_values(by='Abs_Coefficient', ascending=False)
+
+print("\nTop 10 Features by Absolute Coefficient Value:")
+print(coefficients.head(10))
+
+# Visualize top 10 feature importances
+plt.figure(figsize=(10, 7))
+sns.barplot(x='Coefficient', y='Feature', data=coefficients.head(10), palette='viridis')
+plt.title('Top 10 Feature Importances (Coefficient Magnitude)')
+plt.xlabel('Coefficient Value (Log-Odds Scale)')
+plt.ylabel('Feature')
+plt.tight_layout()
+plt.show()
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- SUPPORT VECTOR MACHINE -->
+            <div id="svm" class="topic-content">
+                <h2 class="text-2xl font-bold mb-4 text-gray-700">SUPPORT VECTOR MACHINE</h2>
+                <div class="mb-6">
+                    <div class="flex mb-4 border-b border-gray-200">
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="svm-1">Without Dataset</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="svm-2">With Local Dataset</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg text-gray-700" data-tab="svm-3">With Online Dataset</button>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-b-lg rounded-r-lg shadow-inner">
+                        <div id="svm-1" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Support Vector Machine Without Dataset</h3>
+                            <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import svm
+from sklearn.datasets import make_blobs, make_circles, make_moons
+from sklearn.metrics import accuracy_score
+
+# --- Helper function to plot decision boundaries ---
+def plot_decision_boundary(model, X, y, title):
+    plt.figure(figsize=(8, 6))
+    # Plot data points
+    scatter = plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.Paired, edgecolors='k', s=60)
+
+    # Create a meshgrid
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    xx, yy = np.meshgrid(np.linspace(xlim[0], xlim[1], 50),
+                         np.linspace(ylim[0], ylim[1], 50))
+
+    # Predict on the meshgrid
+    Z = model.decision_function(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+
+    # Plot decision boundary and margins
+    plt.contour(xx, yy, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    # Plot support vectors
+    plt.scatter(model.support_vectors_[:, 0], model.support_vectors_[:, 1], s=100,
+                linewidth=1, facecolors='none', edgecolors='k', label='Support Vectors')
+
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.title(title)
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.show()
+
+# --- 1. Linearly Separable Data ---
+print("--- 1. SVM with Linearly Separable Data ---")
+X_linear, y_linear = make_blobs(n_samples=100, centers=2, random_state=42, cluster_std=0.60)
+
+# Train linear SVM
+linear_svm = svm.SVC(kernel='linear', C=1.0, random_state=42) # C is the regularization parameter
+linear_svm.fit(X_linear, y_linear)
+y_pred_linear = linear_svm.predict(X_linear)
+accuracy_linear = accuracy_score(y_linear, y_pred_linear)
+print(f"Linear SVM Accuracy: {accuracy_linear:.4f}")
+print(f"Number of Support Vectors: {len(linear_svm.support_vectors_)}")
+
+# Plot
+plot_decision_boundary(linear_svm, X_linear, y_linear, f'Linear SVM (Accuracy: {accuracy_linear:.4f})')
+
+# --- 2. Non-Linearly Separable Data (Circles) ---
+print("\n--- 2. SVM with Non-Linearly Separable Data (Circles) ---")
+X_circle, y_circle = make_circles(n_samples=100, factor=0.5, noise=0.1, random_state=42)
+
+# Train SVM with RBF kernel
+rbf_svm_circle = svm.SVC(kernel='rbf', gamma=0.5, C=1.0, random_state=42) # gamma controls the RBF kernel width
+rbf_svm_circle.fit(X_circle, y_circle)
+y_pred_circle = rbf_svm_circle.predict(X_circle)
+accuracy_circle = accuracy_score(y_circle, y_pred_circle)
+print(f"RBF SVM (Circles) Accuracy: {accuracy_circle:.4f}")
+print(f"Number of Support Vectors: {len(rbf_svm_circle.support_vectors_)}")
+
+# Plot
+plot_decision_boundary(rbf_svm_circle, X_circle, y_circle, f'RBF SVM on Circles (Accuracy: {accuracy_circle:.4f})')
+
+# --- 3. Non-Linearly Separable Data (Moons) ---
+print("\n--- 3. SVM with Non-Linearly Separable Data (Moons) ---")
+X_moon, y_moon = make_moons(n_samples=100, noise=0.15, random_state=42)
+
+# Train SVM with RBF kernel
+rbf_svm_moon = svm.SVC(kernel='rbf', gamma=1.0, C=1.0, random_state=42)
+rbf_svm_moon.fit(X_moon, y_moon)
+y_pred_moon = rbf_svm_moon.predict(X_moon)
+accuracy_moon = accuracy_score(y_moon, y_pred_moon)
+print(f"RBF SVM (Moons) Accuracy: {accuracy_moon:.4f}")
+print(f"Number of Support Vectors: {len(rbf_svm_moon.support_vectors_)}")
+
+# Plot
+plot_decision_boundary(rbf_svm_moon, X_moon, y_moon, f'RBF SVM on Moons (Accuracy: {accuracy_moon:.4f})')
+
+# --- 4. SVM with Polynomial Kernel ---
+print("\n--- 4. SVM with Polynomial Kernel (Moons) ---")
+poly_svm_moon = svm.SVC(kernel='poly', degree=3, C=1.0, gamma='scale', random_state=42) # degree for polynomial
+poly_svm_moon.fit(X_moon, y_moon)
+y_pred_poly = poly_svm_moon.predict(X_moon)
+accuracy_poly = accuracy_score(y_moon, y_pred_poly)
+print(f"Polynomial SVM (Moons) Accuracy: {accuracy_poly:.4f}")
+print(f"Number of Support Vectors: {len(poly_svm_moon.support_vectors_)}")
+
+# Plot
+plot_decision_boundary(poly_svm_moon, X_moon, y_moon, f'Polynomial (deg=3) SVM on Moons (Accuracy: {accuracy_poly:.4f})')
+
+                            </code></pre>
+                        </div>
+                        <div id="svm-2" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Support Vector Machine With Local Dataset</h3>
+                             <p class="mb-2 text-sm text-gray-500">Note: This code expects a CSV file named 'logistic.csv' in the specified path. Ensure the file exists or modify the path.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> Pandas, NumPy, Scikit-learn, Matplotlib<br>
+                                <strong>Run in terminal:</strong> <code>pip install pandas numpy scikit-learn matplotlib</code>
+                            </div>
+                            <pre><code class="language-python">
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix, classification_report, ConfusionMatrixDisplay # Import ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+
+# --- IMPORTANT: Modify this path to your actual file location ---
+file_path = r"C:\Users\Disha\OneDrive\Desktop\ml practical\logistic.csv"
+# ---------------------------------------------------------
+
+try:
+    # Step 1: Load the dataset
+    data = pd.read_csv(file_path)
+    print("Data loaded successfully. First 5 rows:")
+    print(data.head())  # Show first 5 rows to check
+
+    # Step 2: Select input features (X) and target label (y)
+    # Ensure these columns exist in your CSV
+    if 'CreditScore' not in data.columns or 'AnnualIncome' not in data.columns or 'LoanApproved' not in data.columns:
+        raise ValueError("Required columns ('CreditScore', 'AnnualIncome', 'LoanApproved') not found in the CSV.")
+
+    X = data[['CreditScore', 'AnnualIncome']]  # Independent variables
+    y = data['LoanApproved']  # Dependent variable
+
+    # Step 3: Split data into training and testing (80% train, 20% test)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+    print(f"\nData split: {len(X_train)} training samples, {len(X_test)} testing samples.")
+
+    # Step 4: Create and train the SVM model
+    model = SVC(kernel='linear', random_state=0)  # Using linear kernel, added random_state
+    model.fit(X_train, y_train)
+    print("\nModel trained.")
+
+    # Step 5: Make predictions
+    y_pred = model.predict(X_test)
+
+    # Step 6: Print confusion matrix and Classification Report
+    cm = confusion_matrix(y_test, y_pred)
+    print("\nConfusion Matrix:")
+    print(cm)
+    print("\nClassification Report:")
+    print(classification_report(y_test, y_pred, target_names=["Loan not approved", "Loan approved"])) # Added target names
+
+    # Step 7: Plot confusion matrix using ConfusionMatrixDisplay for better visualization
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["Loan not approved", "Loan approved"])
+    disp.plot(cmap=plt.cm.Blues)
+    plt.title("Confusion Matrix Heatmap (SVM)")
+    plt.grid(False)
+    plt.show()
+
+
+    # Step 8: Plot decision boundary (only if 2 features are used)
+    def plot_boundary(X_plot, y_plot, model_to_plot):
+        # Check if X_plot is a DataFrame and get values
+        if isinstance(X_plot, pd.DataFrame):
+            X_vals = X_plot.values
+            feature_names_plot = X_plot.columns
+        else: # Assume it's a NumPy array
+            X_vals = X_plot
+            feature_names_plot = ["Feature 1", "Feature 2"] # Generic names
+
+        y_vals = y_plot.values if isinstance(y_plot, pd.Series) else y_plot # Ensure y is NumPy array
+
+        x_min, x_max = X_vals[:, 0].min()-1, X_vals[:, 0].max()+1
+        y_min, y_max = X_vals[:, 1].min()-1, X_vals[:, 1].max()+1
+
+        # Create grid to predict on
+        xx, yy = np.meshgrid(np.linspace(x_min, x_max, 100),
+                             np.linspace(y_min, y_max, 100))
+
+        # Predict for every point in the grid
+        Z = model_to_plot.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = Z.reshape(xx.shape)
+
+        # Plot the decision boundary and data points
+        plt.figure(figsize=(10, 7))
+        plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
+        plt.scatter(X_vals[:, 0], X_vals[:, 1], c=y_vals, cmap=plt.cm.coolwarm, edgecolors='k')
+        plt.xlabel(feature_names_plot[0])
+        plt.ylabel(feature_names_plot[1])
+        plt.title("SVM Decision Boundary (Local Data)")
+        plt.show()
+
+    # Call the function to plot decision boundary (only for 2D features)
+    if X_train.shape[1] == 2:
+        print("\nPlotting decision boundary...")
+        # Plot with training data for visualization
+        plot_boundary(X_train, y_train, model)
+    else:
+        print("\nSkipping decision boundary plot: Not 2 features.")
+
+except FileNotFoundError:
+    print(f"\nError: The file '{file_path}' was not found.")
+    print("Please ensure the CSV file exists at the specified path or update the 'file_path' variable.")
+except ValueError as ve:
+    print(f"\nError: {ve}")
+except Exception as e:
+    print(f"\nAn unexpected error occurred: {e}")
+                            </code></pre>
+                        </div>
+                        <div id="svm-3" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Support Vector Machine With Online Dataset</h3>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Pandas, Matplotlib, Seaborn, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy pandas matplotlib seaborn scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import svm
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.datasets import load_iris # Using Iris dataset for multi-class classification
+
+# Load the Iris dataset from scikit-learn
+print("Loading Iris dataset from scikit-learn...")
+iris = load_iris()
+X = iris.data
+y = iris.target # 0: setosa, 1: versicolor, 2: virginica
+
+# Create a DataFrame for easier handling (optional)
+df = pd.DataFrame(X, columns=iris.feature_names)
+df['target'] = y
+df['species'] = df['target'].map({i: name for i, name in enumerate(iris.target_names)})
+
+print("Dataset Info:")
+print(f"Shape: {df.shape}")
+print(f"Target classes: {iris.target_names}")
+print("\nFirst 5 rows:")
+print(df.head())
+
+# Split data into training and testing sets (70% train, 30% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+print(f"\nData split: {len(X_train)} training samples, {len(X_test)} testing samples.")
+
+# Scale features (important for SVM)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+print("\nFeatures scaled using StandardScaler.")
+
+# --- Hyperparameter Tuning using GridSearchCV ---
+print("\nPerforming Hyperparameter Tuning using GridSearchCV...")
+param_grid = {
+    'C': [0.1, 1, 10, 100],            # Regularization parameter
+    'gamma': ['scale', 'auto', 0.1, 1], # Kernel coefficient for 'rbf', 'poly', 'sigmoid'
+    'kernel': ['rbf', 'linear']         # Kernels to test
+}
+
+# Create SVM classifier
+svc = svm.SVC(probability=True, random_state=42) # probability needed for some metrics/plots
+
+# Instantiate GridSearchCV
+# cv=5 means 5-fold cross-validation
+grid_search = GridSearchCV(svc, param_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=1)
+grid_search.fit(X_train_scaled, y_train)
+
+# Display best parameters and best score
+print(f"\nBest parameters found: {grid_search.best_params_}")
+print(f"Best cross-validation accuracy: {grid_search.best_score_:.4f}")
+
+# Use the best model found by GridSearchCV
+best_model = grid_search.best_estimator_
+print("\nBest SVM model selected and trained.")
+
+# Make predictions on the test set
+y_pred = best_model.predict(X_test_scaled)
+
+# Evaluate the best model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nModel Evaluation (Test Set):")
+print(f"Accuracy: {accuracy:.4f}")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+
+# Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=iris.target_names)
+print("\nConfusion Matrix:")
+print(cm)
+
+plt.figure(figsize=(8, 6))
+disp.plot(cmap=plt.cm.Blues, ax=plt.gca()) # Use plt.gca()
+plt.title('Confusion Matrix - Iris SVM Classification')
+plt.grid(False)
+plt.show()
+
+# --- Visualize decision boundary for two features (e.g., Sepal Length vs Sepal Width) ---
+print("\nVisualizing Decision Boundary using first two features (Sepal Length, Sepal Width)...")
+
+# Select only the first two features
+X_train_2d = X_train_scaled[:, :2]
+X_test_2d = X_test_scaled[:, :2]
+
+# Train a new SVM model using only these two features with the best parameters
+model_2d = svm.SVC(kernel=best_model.kernel, C=best_model.C, gamma=best_model.gamma, random_state=42)
+model_2d.fit(X_train_2d, y_train)
+
+# Create meshgrid
+h = 0.02
+x_min, x_max = X_train_scaled[:, 0].min() - 1, X_train_scaled[:, 0].max() + 1
+y_min, y_max = X_train_scaled[:, 1].min() - 1, X_train_scaled[:, 1].max() + 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+# Predict on meshgrid
+Z = model_2d.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+# Plot decision boundary and data points
+plt.figure(figsize=(12, 8))
+plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
+
+# Plot training points (scaled)
+scatter = plt.scatter(X_train_2d[:, 0], X_train_2d[:, 1], c=y_train,
+                      cmap=plt.cm.coolwarm, edgecolors='k', s=60, label='Train Data')
+# Plot test points (scaled) - optional
+# plt.scatter(X_test_2d[:, 0], X_test_2d[:, 1], c=y_test,
+#             cmap=plt.cm.coolwarm, edgecolors='r', marker='X', s=100, label='Test Data')
+
+plt.xlabel(f'{iris.feature_names[0]} (Scaled)')
+plt.ylabel(f'{iris.feature_names[1]} (Scaled)')
+plt.title(f'SVM Decision Boundary (Iris Dataset - Sepal Features)\n{best_model.kernel} kernel, C={best_model.C}, gamma={best_model.gamma}')
+plt.legend(handles=scatter.legend_elements()[0], labels=iris.target_names)
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.show()
+
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HEBBIAN LEARNING -->
+            <div id="hebbian" class="topic-content">
+                <h2 class="text-2xl font-bold mb-4 text-gray-700">HEBBIAN LEARNING</h2>
+                 <p class="mb-4 text-sm text-gray-500">Note: Hebbian learning is an unsupervised learning rule, often demonstrated conceptually. These examples show the weight update mechanism rather than building a full classifier like the supervised methods above.</p>
+                <div class="mb-6">
+                    <div class="flex mb-4 border-b border-gray-200">
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="heb-1">Concept Example</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="heb-2">With Local Data (Simulation)</button>
+                         <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="heb-3">On Iris Data (Conceptual)</button>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-b-lg rounded-r-lg shadow-inner">
+                        <div id="heb-1" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Hebbian Learning Concept Example</h3>
+                             <p class="mb-2 text-sm text-gray-500">Demonstrates the basic Hebbian update rule: Δw = η * y * x, where y is the neuron's output (often related to activation) and x is the input.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Pandas<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy pandas</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import pandas as pd # Used only for printing the weight vector nicely
+
+# Initial weight vector (example)
+w = np.array([1, -1, 0, 0.5]) # Corrected initialization
+
+# Input vectors (example)
+Xi = [np.array([1, -2, 1.5, 0]),
+      np.array([1, -0.5, -2, -1.5]),
+      np.array([0, 1, -1, 1.5])]
+
+C = 1 # Learning rate (eta)
+
+Iteration = 0
+print(f"Initial weight vector: {w}")
+print("Input vectors:")
+for i, x_vec in enumerate(Xi):
+    print(f" X{i+1}: {x_vec}")
+
+print("\n--- Training Start ---")
+for i in range(len(Xi)):
+    x_i = Xi[i]
+    # Calculate net input (activation)
+    net = np.dot(w, x_i)
+    # Simple output function (sign or identity, depends on variant)
+    # Here, using net directly as 'y' for the basic rule delta_w = eta * y * x
+    # A step function (like sign) could also be used: Fnet = np.sign(net)
+    y_i = net # Let y = net for this simple example
+    # Calculate weight change
+    dw = C * y_i * x_i
+    # Update weights
+    w = w + dw # Corrected update (use = or +=)
+    Iteration += 1
+    print(f"\nIteration {Iteration}:")
+    print(f" Input X{i+1}: {x_i}")
+    print(f" Net input (y): {net:.4f}")
+    print(f" Weight change dw: {dw}")
+    print(f" New Weight vector w: {w}")
+
+print("\n--- Training End ---")
+print(f"Final weights after {Iteration} iterations: {w}")
+
+# Optional: Use Pandas for formatted output of final weights
+final_weights_df = pd.DataFrame(w, index=[f'w{j+1}' for j in range(len(w))], columns=['Value'])
+print("\nFinal Weights (Formatted):")
+print(final_weights_df)
+                            </code></pre>
+                        </div>
+                        <div id="heb-2" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Hebbian Learning With Local Data (Simulation)</h3>
+                             <p class="mb-2 text-sm text-gray-500">Creates correlated data, saves it ('hebbian_local_data.csv'), reads it back, and applies Hebbian learning. The weights should align with the principal direction of the data.</p>
+                              <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Pandas, Matplotlib<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy pandas matplotlib</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+
+# --- Hebbian Learning Function (from previous example) ---
+def hebbian_learning(X, initial_weights, learning_rate=0.01, epochs=5): # Adjusted learning rate/epochs
+    weights = initial_weights.copy()
+    weight_history = [weights.copy()]
+    n_samples, n_features = X.shape
+    print(f"Initial weights: {weights}")
+    for epoch in range(epochs):
+        # print(f"\n--- Epoch {epoch+1} ---") # Reduce verbosity
+        for i in range(n_samples):
+            x_i = X[i]
+            y_i = np.dot(weights, x_i) # Simple linear activation y = w.x
+            delta_w = learning_rate * y_i * x_i # Basic Hebbian rule
+            weights += delta_w
+        # Store weights only at the end of epoch for clarity
+        weight_history.append(weights.copy())
+        print(f"Epoch {epoch+1} Weights: {weights}")
+
+    print(f"\nFinal weights after {epochs} epochs: {weights}")
+    return weights, np.array(weight_history)
+
+# --- Step 1: Create synthetic correlated data and save locally ---
+np.random.seed(42)
+num_samples = 100
+# Create data with correlation between feature 1 and 2
+mean = [0, 0]
+cov = [[1, 0.8], [0.8, 1]] # Covariance matrix indicating positive correlation
+X_local = np.random.multivariate_normal(mean, cov, num_samples)
+
+# Create DataFrame
+df_local = pd.DataFrame(X_local, columns=['feature1', 'feature2'])
+
+# Save to CSV
+csv_path_heb = 'hebbian_local_data.csv'
+df_local.to_csv(csv_path_heb, index=False)
+print(f"Simulated local dataset saved to '{csv_path_heb}'")
+
+# --- Step 2: Load data from local file ---
+if os.path.exists(csv_path_heb):
+    print(f"\nLoading data from: {csv_path_heb}")
+    df_loaded = pd.read_csv(csv_path_heb)
+    X_loaded = df_loaded.values
+    print("Data loaded successfully.")
+
+    # --- Step 3: Apply Hebbian Learning ---
+    initial_w_local = np.random.rand(X_loaded.shape[1]) * 0.1 # Small random initial weights
+    final_weights_local, history_local = hebbian_learning(X_loaded, initial_w_local, learning_rate=0.001, epochs=10)
+
+    # --- Step 4: Visualization ---
+    plt.figure(figsize=(10, 8))
+    plt.scatter(X_loaded[:, 0], X_loaded[:, 1], alpha=0.6, label='Data Points')
+
+    # Plot weight trajectory
+    plt.plot(history_local[:, 0], history_local[:, 1], 'ro-', markersize=4, linewidth=1.5, label='Weight Path')
+    plt.plot(history_local[0, 0], history_local[0, 1], 'go', markersize=10, label='Start Weights')
+    plt.plot(history_local[-1, 0], history_local[-1, 1], 'ko', markersize=10, label='Final Weights')
+
+    # Plot final weight vector scaled for visibility
+    # Avoid division by zero if weights are tiny
+    max_abs_final_weight = max(np.abs(final_weights_local)) if max(np.abs(final_weights_local)) > 1e-6 else 1
+    scale_factor = max(np.abs(X_loaded.flatten())) / max_abs_final_weight * 0.5
+    plt.arrow(0, 0, final_weights_local[0] * scale_factor, final_weights_local[1] * scale_factor,
+              head_width=0.1, head_length=0.15, fc='k', ec='k', length_includes_head=True,
+              linewidth=2, label='Final Weight Vector (scaled)')
+
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.title('Hebbian Learning on Correlated Data')
+    plt.legend()
+    plt.grid(True)
+    plt.axis('equal') # Use equal scaling for better visualization of direction
+    plt.show()
+
+    # Explanation: Hebbian learning tends to align the weight vector with the direction
+    # of maximum variance in the input data (similar to the first principal component).
+    print("\nExplanation: The final weight vector should align with the direction")
+    print("of the strongest correlation or variance in the input data.")
+
+else:
+    print(f"Error: Could not find the file '{csv_path_heb}'.")
+
+                            </code></pre>
+                        </div>
+                         <div id="heb-3" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Hebbian Learning On Iris Data (Conceptual)</h3>
+                             <p class="mb-2 text-sm text-gray-500">Applying Hebbian rule to Iris data (first two features). This is purely conceptual to see how weights evolve; it doesn't perform classification.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Pandas, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy pandas matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+# --- Hebbian Learning Function (from previous example) ---
+def hebbian_learning(X, initial_weights, learning_rate=0.01, epochs=1):
+    weights = initial_weights.copy()
+    weight_history = [weights.copy()]
+    n_samples, n_features = X.shape
+    print(f"Initial weights: {weights}")
+    for epoch in range(epochs):
+        print(f"\n--- Epoch {epoch+1} ---")
+        for i in range(n_samples):
+            x_i = X[i]
+            y_i = np.dot(weights, x_i) # Simple linear activation
+            delta_w = learning_rate * y_i * x_i # Basic Hebbian rule
+            weights += delta_w
+            # Store intermediate steps for detailed trajectory (can be slow for many samples/epochs)
+            if i % 10 == 0: # Store less frequently for performance
+                 weight_history.append(weights.copy())
+        weight_history.append(weights.copy()) # Ensure end-of-epoch weight is stored
+        print(f"End of Epoch {epoch+1} Weights: {weights}")
+
+    print(f"\nFinal weights after {epochs} epochs: {weights}")
+    return weights, np.array(weight_history)
+
+
+# --- Load Iris dataset ---
+print("Loading Iris dataset...")
+iris = load_iris()
+# Use only the first two features (Sepal Length, Sepal Width) for simplicity
+X_iris = iris.data[:, :2]
+y_iris = iris.target
+feature_names = iris.feature_names[:2]
+
+print(f"Using features: {feature_names}")
+
+# --- Standardize the data ---
+# Scaling is often beneficial for learning algorithms, especially those sensitive to magnitude like Hebbian
+scaler = StandardScaler()
+X_iris_scaled = scaler.fit_transform(X_iris)
+print("Iris data standardized.")
+
+# --- Apply Hebbian Learning ---
+# Use small random initial weights
+initial_w_iris = np.random.rand(X_iris_scaled.shape[1]) * 0.01
+final_weights_iris, history_iris = hebbian_learning(X_iris_scaled, initial_w_iris, learning_rate=0.001, epochs=1) # Single epoch
+
+# --- Visualization ---
+plt.figure(figsize=(10, 8))
+
+# Plot scaled Iris data points, colored by species
+scatter = plt.scatter(X_iris_scaled[:, 0], X_iris_scaled[:, 1], c=y_iris, cmap=plt.cm.viridis, alpha=0.7, label='Iris Data (Scaled)')
+
+# Plot weight trajectory
+plt.plot(history_iris[:, 0], history_iris[:, 1], 'ro-', markersize=3, linewidth=1, label='Weight Path')
+plt.plot(history_iris[0, 0], history_iris[0, 1], 'go', markersize=10, label='Start Weights')
+plt.plot(history_iris[-1, 0], history_iris[-1, 1], 'ko', markersize=10, label='Final Weights')
+
+# Plot final weight vector scaled for visibility
+max_abs_weight = max(np.abs(final_weights_iris)) if max(np.abs(final_weights_iris)) > 1e-6 else 1 # Avoid division by zero
+scale_factor = max(np.abs(X_iris_scaled.flatten())) / max_abs_weight * 0.5
+plt.arrow(0, 0, final_weights_iris[0] * scale_factor, final_weights_iris[1] * scale_factor,
+          head_width=0.1, head_length=0.15, fc='k', ec='k', length_includes_head=True,
+          linewidth=2, label='Final Weight Vector (scaled)')
+
+plt.xlabel(f'{feature_names[0]} (Scaled)')
+plt.ylabel(f'{feature_names[1]} (Scaled)')
+plt.title('Conceptual Hebbian Learning on Iris Data (Sepal Features)')
+
+# Create legend handles manually for clarity
+handles, _ = plt.gca().get_legend_handles_labels() # Get handles generated by plot elements
+legend_handles = scatter.legend_elements()[0] + handles[1:] # Combine scatter handles with line/marker handles
+legend_labels = list(iris.target_names) + ['Weight Path', 'Start Weights', 'Final Weights', 'Final Vector (scaled)']
+plt.legend(handles=legend_handles, labels=legend_labels)
+
+plt.grid(True)
+plt.axis('equal')
+plt.show()
+
+print("\nNote: The Hebbian rule applied here is unsupervised. The final weight vector")
+print("tends to align with the direction of maximum variance in the input data,")
+print("not necessarily separating the classes effectively like a supervised method.")
+
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SINGLE LAYER PERCEPTRON -->
+            <div id="perceptron" class="topic-content">
+                <h2 class="text-2xl font-bold mb-4 text-gray-700">SINGLE LAYER PERCEPTRON LEARNING ALGORITHM</h2>
+                <div class="mb-6">
+                    <div class="flex mb-4 border-b border-gray-200">
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="per-1">Without Dataset (Synthetic)</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="per-2">With Local Data (Simulation)</button>
+                        <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg text-gray-700" data-tab="per-3">With Online Dataset (Iris Subset)</button>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-b-lg rounded-r-lg shadow-inner">
+                        <div id="per-1" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Single Layer Perceptron Without Dataset (Synthetic)</h3>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+from sklearn.model_selection import train_test_split
+
+# --- Perceptron Class (Copied from your example) ---
+class Perceptron:
+    def __init__(self):
+        self.weights = None
+        self.bias = None
+
+    def train(self, X, y, learning_rate=0.05, n_iters=100):
+        n_samples, n_features = X.shape
+        if self.weights is None:
+            self.weights = np.zeros((n_features, 1))
+        if self.bias is None:
+            self.bias = 0
+
+        for _ in range(n_iters):
+            a = np.dot(X, self.weights) + self.bias
+            y_predict = self.step_function(a)
+            update = y - y_predict
+            delta_w = learning_rate * np.dot(X.T, update)
+            delta_b = learning_rate * np.sum(update)
+            self.weights += delta_w
+            self.bias += delta_b
+        return self.weights, self.bias
+
+    def step_function(self, x):
+        return np.array([1 if elem >= 0 else 0 for elem in x]).reshape(-1, 1)
+
+    def predict(self, X):
+        if self.weights is None or self.bias is None:
+            raise ValueError("Model has not been trained yet.")
+        a = np.dot(X, self.weights) + self.bias
+        return self.step_function(a)
+
+# --- Plotting Function (Adapted from your example) ---
+def plot_hyperplane(X, y, weights, bias, title="Dataset"):
+    if X.shape[1] != 2:
+        print("Plotting only supported for 2 features.")
+        return
+
+    # Add small epsilon to avoid division by zero
+    epsilon = 1e-6
+    if abs(weights[1][0]) < epsilon: # Vertical line case
+        print("Warning: Hyperplane appears vertical.")
+        x_intercept = -bias / weights[0][0]
+        y_min_plot, y_max_plot = X[:, 1].min() - 1, X[:, 1].max() + 1
+        x_hyperplane = [x_intercept, x_intercept]
+        y_hyperplane = [y_min_plot, y_max_plot]
+    else: # Normal case
+        slope = -weights[0][0] / (weights[1][0] + epsilon)
+        intercept = -bias / (weights[1][0] + epsilon)
+        x_min_plot, x_max_plot = X[:, 0].min() - 1, X[:, 0].max() + 1
+        x_hyperplane = np.linspace(x_min_plot, x_max_plot, 10)
+        y_hyperplane = slope * x_hyperplane + intercept
+
+    fig = plt.figure(figsize=(8, 6))
+    plt.scatter(X[:, 0], X[:, 1], c=y.flatten(), cmap='viridis') # Use flatten() on y
+    plt.plot(x_hyperplane, y_hyperplane, '-r', label='Decision Boundary')
+
+    plt.title(title)
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.xlim(X[:, 0].min() - 1, X[:, 0].max() + 1)
+    plt.ylim(X[:, 1].min() - 1, X[:, 1].max() + 1)
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.show()
+
+
+# --- Main Script ---
+if __name__ == "__main__":
+    print("="*50)
+    print(" Perceptron with Synthetic make_blobs Data ")
+    print("="*50)
+    np.random.seed(123) # Seed for reproducibility
+
+    # 1. Generate Data
+    N_SAMPLES = 1000
+    CENTERS = 2
+    X, y = make_blobs(n_samples=N_SAMPLES, centers=CENTERS, random_state=42, cluster_std=1.2)
+    print(f"Generated {N_SAMPLES} samples with {CENTERS} centers.")
+    print(f"Shape X: {X.shape}")
+    print(f"Shape y: {y.shape}") # y is initially (N,)
+
+    # Plot initial data
+    fig = plt.figure(figsize=(8,6))
+    plt.scatter(X[:,0], X[:,1], c=y, cmap='viridis')
+    plt.title("Initial Synthetic Dataset (make_blobs)")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.show()
+
+    # 2. Prepare Data
+    # Reshape y to be a column vector (N, 1)
+    y_true = y[:, np.newaxis]
+    print(f"Reshaped y_true shape: {y_true.shape}")
+
+    # 3. Split Data
+    X_train, X_test, y_train, y_test = train_test_split(X, y_true, test_size=0.25, random_state=42, stratify=y_true)
+    print(f'\nShape X_train: {X_train.shape}')
+    print(f'Shape y_train: {y_train.shape}')
+    print(f'Shape X_test: {X_test.shape}')
+    print(f'Shape y_test: {y_test.shape}')
+
+    # 4. Train Perceptron
+    print("\nTraining Perceptron...")
+    p = Perceptron()
+    # This data is linearly separable, should converge quickly
+    W_trained, b_trained = p.train(X_train, y_train, learning_rate=0.05, n_iters=100)
+    print("Training complete.")
+    print(f"Trained Weights:\n{W_trained}")
+    print(f"Trained Bias: {b_trained:.4f}")
+
+    # 5. Evaluate
+    y_p_train = p.predict(X_train)
+    y_p_test = p.predict(X_test)
+
+    train_accuracy = 100 - np.mean(np.abs(y_p_train - y_train)) * 100
+    test_accuracy = 100 - np.mean(np.abs(y_p_test - y_test)) * 100
+    print(f"\nTraining accuracy: {train_accuracy:.2f}%")
+    print(f"Test accuracy: {test_accuracy:.2f}%")
+
+    # 6. Plot Hyperplane
+    print("\nPlotting decision boundary...")
+    # Use original y (flattened) for coloring points in the plot
+    plot_hyperplane(X, y, W_trained, b_trained,
+                    title="Synthetic Data & Perceptron Boundary")
+
+    print("\n--- Processing Complete ---")
+
+                            </code></pre>
+                        </div>
+                        <div id="per-2" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Single Layer Perceptron With Local Data (Simulation)</h3>
+                            <p class="mb-2 text-sm text-gray-500">Creates linearly separable data, saves it ('perceptron_local_data.csv'), reads it back, trains a Perceptron, and visualizes the result.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Pandas, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy pandas matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+import numpy as np
+import pandas as pd # Used here to simulate CSV-like structure
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder # Useful if target is not 0/1 initially
+import os # To manage file saving/loading
+
+# --- Perceptron Class (Copied from your example) ---
+class Perceptron:
+    def __init__(self):
+        # Initialize weights and bias to None or zeros before training
+        self.weights = None
+        self.bias = None
+
+    def train(self, X, y, learning_rate=0.05, n_iters=100):
+        n_samples, n_features = X.shape
+
+        # Initialize weights and bias here if not done in __init__
+        if self.weights is None:
+            self.weights = np.zeros((n_features, 1))
+        if self.bias is None:
+            self.bias = 0
+
+        # Training loop
+        for _ in range(n_iters):
+            # Linear combination (activation)
+            a = np.dot(X, self.weights) + self.bias
+            # Apply step function
+            y_predict = self.step_function(a)
+
+            # Compute weight and bias updates
+            # Ensure y has the same shape as y_predict for subtraction
+            update = y - y_predict
+            delta_w = learning_rate * np.dot(X.T, update)
+            delta_b = learning_rate * np.sum(update) # Sum over all samples
+
+            # Update weights and bias
+            self.weights += delta_w
+            self.bias += delta_b
+
+        return self.weights, self.bias
+
+    def step_function(self, x):
+        # Ensure output is a column vector matching y_predict shape
+        return np.array([1 if elem >= 0 else 0 for elem in x]).reshape(-1, 1)
+
+    def predict(self, X):
+        if self.weights is None or self.bias is None:
+            raise ValueError("Model has not been trained yet.")
+        a = np.dot(X, self.weights) + self.bias
+        return self.step_function(a)
+
+# --- Plotting Function (Adapted from your example) ---
+def plot_hyperplane(X, y, weights, bias, title="Dataset", feature_names=None):
+    if X.shape[1] != 2:
+        print("Plotting only supported for 2 features.")
+        return
+
+    # Add small epsilon to avoid division by zero
+    epsilon = 1e-6
+    if abs(weights[1][0]) < epsilon: # Vertical line case
+        print("Warning: Hyperplane appears vertical.")
+        x_intercept = -bias / (weights[0][0] + epsilon)
+        y_min_plot, y_max_plot = X[:, 1].min() - 1, X[:, 1].max() + 1
+        x_hyperplane = [x_intercept, x_intercept]
+        y_hyperplane = [y_min_plot, y_max_plot]
+    else: # Normal case
+        slope = -weights[0][0] / (weights[1][0] + epsilon)
+        intercept = -bias / (weights[1][0] + epsilon)
+        x_min_plot, x_max_plot = X[:, 0].min() - 1, X[:, 0].max() + 1
+        x_hyperplane = np.linspace(x_min_plot, x_max_plot, 10)
+        y_hyperplane = slope * x_hyperplane + intercept
+
+
+    fig = plt.figure(figsize=(8, 6))
+    # Ensure y is flattened for coloring points if it's a column vector
+    plt.scatter(X[:, 0], X[:, 1], c=y.flatten(), cmap='viridis')
+    plt.plot(x_hyperplane, y_hyperplane, '-r', label='Decision Boundary')
+
+    plt.title(title)
+    plt.xlabel(feature_names[0] if feature_names else "Feature 1")
+    plt.ylabel(feature_names[1] if feature_names else "Feature 2")
+    plt.xlim(X[:, 0].min() - 1, X[:, 0].max() + 1)
+    plt.ylim(X[:, 1].min() - 1, X[:, 1].max() + 1)
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.show()
+
+# --- Main Script ---
+if __name__ == "__main__":
+    print("="*50)
+    print(" Perceptron with Simulated Local Data ")
+    print("="*50)
+
+    # 1. Create/Simulate Data and Save Locally
+    np.random.seed(42)
+    # Create linearly separable data
+    X0_local = np.random.rand(100, 2) * 5 - np.array([3, 3]) # Class 0
+    X1_local = np.random.rand(100, 2) * 5 + np.array([1, 1]) # Class 1
+    X_local_sim = np.vstack((X0_local, X1_local))
+    y_local_sim = np.hstack((np.zeros(100), np.ones(100)))
+
+    df_local_sim = pd.DataFrame(X_local_sim, columns=['feature1', 'feature2'])
+    df_local_sim['target'] = y_local_sim.astype(int) # Ensure target is integer
+
+    csv_path_perc = 'perceptron_local_data.csv'
+    df_local_sim.to_csv(csv_path_perc, index=False)
+    print(f"Simulated local dataset saved to '{csv_path_perc}'")
+    print("Simulated DataFrame head:\n", df_local_sim.head())
+
+    # --- Optional: Replace above simulation with actual file loading ---
+    # try:
+    #     # csv_path_perc = 'your_perceptron_data.csv' # Use your actual file path
+    #     df = pd.read_csv(csv_path_perc)
+    #     print(f"\nLoaded data from {csv_path_perc}")
+    #     feature_cols = ['your_feature1_col', 'your_feature2_col'] # CHANGE THESE
+    #     target_col = 'your_target_col' # CHANGE THIS
+    #     X = df[feature_cols].values
+    #     y_raw = df[target_col]
+    # except FileNotFoundError:
+    #     print(f"Error: File not found at {csv_path_perc}")
+    #     exit()
+    # --------------------------------------------------------------------
+    # Using the simulated data loaded back for demonstration:
+    try:
+        df = pd.read_csv(csv_path_perc)
+        print(f"\nLoading data back from: {csv_path_perc}")
+        feature_cols = ['feature1', 'feature2']
+        target_col = 'target'
+        X = df[feature_cols].values
+        y_raw = df[target_col]
+
+        # Optional: Encode target if it's not 0/1
+        if y_raw.dtype == 'object' or not np.all(np.isin(y_raw, [0, 1])):
+             print("Encoding target variable...")
+             le = LabelEncoder()
+             y = le.fit_transform(y_raw)
+             if len(np.unique(y)) > 2:
+                 raise ValueError("Perceptron requires a binary target (0 or 1).")
+             print(f"Target classes mapped: {dict(zip(le.classes_, le.transform(le.classes_)))}")
+        else:
+             y = y_raw.values # Ensure y is a numpy array
+
+        # Ensure y is a column vector (N, 1) for Perceptron calculations
+        y = y.reshape(-1, 1)
+        print(f"\nShape X: {X.shape}")
+        print(f"Shape y: {y.shape}")
+
+        # 3. Split Data
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
+        print(f'Shape X_train: {X_train.shape}')
+        print(f'Shape y_train: {y_train.shape}')
+        print(f'Shape X_test: {X_test.shape}')
+        print(f'Shape y_test: {y_test.shape}')
+
+        # 4. Train Perceptron
+        print("\nTraining Perceptron...")
+        p = Perceptron()
+        W_trained, b_trained = p.train(X_train, y_train, learning_rate=0.01, n_iters=200) # Adjusted iters
+        print("Training complete.")
+        print(f"Trained Weights:\n{W_trained}")
+        print(f"Trained Bias: {b_trained:.4f}")
+
+
+        # 5. Evaluate
+        y_p_train = p.predict(X_train)
+        y_p_test = p.predict(X_test)
+
+        train_accuracy = 100 - np.mean(np.abs(y_p_train - y_train)) * 100
+        test_accuracy = 100 - np.mean(np.abs(y_p_test - y_test)) * 100
+        print(f"\nTraining accuracy: {train_accuracy:.2f}%")
+        print(f"Test accuracy: {test_accuracy:.2f}%")
+
+        # 6. Plot Hyperplane (if data is 2D)
+        if X.shape[1] == 2:
+            print("\nPlotting decision boundary...")
+            plot_hyperplane(X, y, W_trained, b_trained,
+                            title="Simulated Local Data & Perceptron Boundary",
+                            feature_names=feature_cols)
+        else:
+            print("\nSkipping plot: Data is not 2-dimensional.")
+
+    except FileNotFoundError:
+         print(f"Error: Could not load data from '{csv_path_perc}'. Make sure it was saved correctly.")
+    except ValueError as ve:
+         print(f"Error: {ve}")
+    except Exception as e:
+         print(f"An unexpected error occurred during processing: {e}")
+
+
+    print("\n--- Processing Complete ---")
+
+                            </code></pre>
+                        </div>
+                        <div id="per-3" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">Single Layer Perceptron With Online Dataset (Iris Subset)</h3>
+                             <p class="mb-2 text-sm text-gray-500">Using the Iris dataset, but only the first two classes (Setosa vs Versicolor) and first two features (Sepal Length, Sepal Width) to ensure linear separability suitable for a basic Perceptron.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> NumPy, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install numpy matplotlib scikit-learn</code>
+                            </div>
+                             <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+# --- Perceptron Class (Copied from your example) ---
+class Perceptron:
+    def __init__(self):
+        self.weights = None
+        self.bias = None
+
+    def train(self, X, y, learning_rate=0.05, n_iters=100):
+        n_samples, n_features = X.shape
+        if self.weights is None:
+            self.weights = np.zeros((n_features, 1))
+        if self.bias is None:
+            self.bias = 0
+
+        for _ in range(n_iters):
+            a = np.dot(X, self.weights) + self.bias
+            y_predict = self.step_function(a)
+            update = y - y_predict
+            delta_w = learning_rate * np.dot(X.T, update)
+            delta_b = learning_rate * np.sum(update)
+            self.weights += delta_w
+            self.bias += delta_b
+        return self.weights, self.bias
+
+    def step_function(self, x):
+        return np.array([1 if elem >= 0 else 0 for elem in x]).reshape(-1, 1)
+
+    def predict(self, X):
+        if self.weights is None or self.bias is None:
+            raise ValueError("Model has not been trained yet.")
+        a = np.dot(X, self.weights) + self.bias
+        return self.step_function(a)
+
+# --- Plotting Function (Adapted from your example) ---
+def plot_hyperplane(X, y, weights, bias, title="Dataset", feature_names=None):
+    if X.shape[1] != 2:
+        print("Plotting only supported for 2 features.")
+        return
+
+    # Add small epsilon to avoid division by zero if a weight is exactly zero
+    epsilon = 1e-6
+    if abs(weights[1][0]) < epsilon:
+         print("Warning: Weight for the second feature is close to zero. Hyperplane is vertical.")
+         # Handle vertical line case (slope is infinite)
+         x_intercept = -bias / (weights[0][0] + epsilon) # Added epsilon here too
+         y_min_plot, y_max_plot = X[:, 1].min() - 1, X[:, 1].max() + 1
+         x_hyperplane = [x_intercept, x_intercept]
+         y_hyperplane = [y_min_plot, y_max_plot]
+    else:
+        slope = -weights[0][0] / (weights[1][0] + epsilon)
+        intercept = -bias / (weights[1][0] + epsilon)
+        x_min_plot, x_max_plot = X[:, 0].min() - 1, X[:, 0].max() + 1
+        x_hyperplane = np.linspace(x_min_plot, x_max_plot, 10)
+        y_hyperplane = slope * x_hyperplane + intercept
+
+    fig = plt.figure(figsize=(8, 6))
+    plt.scatter(X[:, 0], X[:, 1], c=y.flatten(), cmap='viridis') # Use flatten() on y
+    plt.plot(x_hyperplane, y_hyperplane, '-r', label='Decision Boundary')
+
+    plt.title(title)
+    plt.xlabel(feature_names[0] if feature_names else "Feature 1")
+    plt.ylabel(feature_names[1] if feature_names else "Feature 2")
+    plt.xlim(X[:, 0].min() - 1, X[:, 0].max() + 1)
+    plt.ylim(X[:, 1].min() - 1, X[:, 1].max() + 1)
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.show()
+
+# --- Main Script ---
+if __name__ == "__main__":
+    print("="*50)
+    print(" Perceptron with Online Iris Data (Binary Subset) ")
+    print("="*50)
+
+    # 1. Load Data
+    iris = load_iris()
+
+    # 2. Prepare Data - Filter for binary classification & 2 features
+    # Select only the first two classes (0: Setosa, 1: Versicolor)
+    # Select only the first two features (0: Sepal Length, 1: Sepal Width)
+    filter_mask = iris.target < 2 # Classes 0 and 1
+    X = iris.data[filter_mask, :2]
+    y = iris.target[filter_mask]
+    feature_names = iris.feature_names[:2]
+    target_names = iris.target_names[:2]
+
+    print(f"Using features: {feature_names}")
+    print(f"Using target classes: {target_names} (mapped to 0 and 1)")
+    print(f"Shape X: {X.shape}") # Should be (100, 2)
+    print(f"Shape y: {y.shape}") # Should be (100,)
+
+    # Reshape y to be a column vector (N, 1)
+    y_true = y[:, np.newaxis]
+    print(f"Reshaped y_true shape: {y_true.shape}")
+
+
+    # Plot initial filtered data
+    fig = plt.figure(figsize=(8,6))
+    plt.scatter(X[:,0], X[:,1], c=y, cmap='viridis')
+    plt.title("Filtered Iris Dataset (Setosa & Versicolor, Sepal Features)")
+    plt.xlabel(feature_names[0])
+    plt.ylabel(feature_names[1])
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.show()
+
+    # 3. Split Data
+    X_train, X_test, y_train, y_test = train_test_split(X, y_true, test_size=0.25, random_state=42, stratify=y_true)
+    print(f'\nShape X_train: {X_train.shape}')
+    print(f'Shape y_train: {y_train.shape}')
+    print(f'Shape X_test: {X_test.shape}')
+    print(f'Shape y_test: {y_test.shape}')
+
+    # 4. Train Perceptron
+    print("\nTraining Perceptron...")
+    p = Perceptron()
+    # Iris (Setosa/Versicolor with Sepal features) is linearly separable
+    W_trained, b_trained = p.train(X_train, y_train, learning_rate=0.05, n_iters=100)
+    print("Training complete.")
+    print(f"Trained Weights:\n{W_trained}")
+    print(f"Trained Bias: {b_trained:.4f}")
+
+    # 5. Evaluate
+    y_p_train = p.predict(X_train)
+    y_p_test = p.predict(X_test)
+
+    train_accuracy = 100 - np.mean(np.abs(y_p_train - y_train)) * 100
+    test_accuracy = 100 - np.mean(np.abs(y_p_test - y_test)) * 100
+    print(f"\nTraining accuracy: {train_accuracy:.2f}%")
+    print(f"Test accuracy: {test_accuracy:.2f}%")
+
+    # 6. Plot Hyperplane
+    print("\nPlotting decision boundary...")
+    # Use original filtered y for coloring points in the plot
+    plot_hyperplane(X, y, W_trained, b_trained,
+                    title="Iris Subset & Perceptron Boundary",
+                    feature_names=feature_names)
+
+    print("\n--- Processing Complete ---")
+
+                             </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANOVA -->
+            <div id="anova" class="topic-content">
+                 <h2 class="text-2xl font-bold mb-4 text-gray-700">FEATURE SELECTION USING ANOVA F-TEST</h2>
+                 <p class="mb-4 text-sm text-gray-500">Using ANOVA F-value between label/feature for feature selection in a classification context (SelectKBest with f_classif).</p>
+                <div class="mb-6">
+                    <div class="flex mb-4 border-b border-gray-200">
+                         <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="anova-1">Without Dataset (Synthetic)</button>
+                         <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg mr-1 text-gray-700" data-tab="anova-2">With Local Dataset</button>
+                         <button class="tab-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-t-lg text-gray-700" data-tab="anova-3">With Online Dataset (Breast Cancer)</button>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-b-lg rounded-r-lg shadow-inner">
+                        <div id="anova-1" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">ANOVA Feature Selection Without Dataset (Synthetic Data)</h3>
+                             <p class="mb-2 text-sm text-gray-500">Generates synthetic classification data, trains Logistic Regression before/after ANOVA feature selection.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> Pandas, NumPy, Seaborn, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install pandas numpy seaborn matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+# anova_synthetic_data.py
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Scikit-learn imports
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, ConfusionMatrixDisplay
+from sklearn.datasets import make_classification
+
+# --- Configuration ---
+N_SAMPLES = 500
+N_FEATURES = 30
+N_INFORMATIVE = 15 # How many features are actually useful
+N_REDUNDANT = 5    # How many features are combinations of informative ones
+N_CLASSES = 2
+TEST_SIZE = 0.3
+RANDOM_STATE = 42
+MAX_ITER_LOGREG = 10000
+K_FEATURES = 10        # Number of top features to select
+
+# --- Helper Function for Plotting CM ---
+def plot_confusion_matrix_display(cm, display_labels, title, cmap):
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=display_labels)
+    fig, ax = plt.subplots(figsize=(6, 5)) # Create figure and axes explicitly
+    disp.plot(cmap=cmap, ax=ax) # Plot on the created axes
+    ax.set_title(title)
+    ax.grid(False) # Disable grid lines often added by ConfusionMatrixDisplay
+    plt.show()
+
+# --- Main Script ---
+if __name__ == "__main__":
+    print("="*60)
+    print("ANOVA Feature Selection using Synthetic Data")
+    print("="*60)
+
+    # 1. Generate Data
+    print(f"Generating synthetic data: {N_SAMPLES} samples, {N_FEATURES} features...")
+    X, y = make_classification(n_samples=N_SAMPLES,
+                               n_features=N_FEATURES,
+                               n_informative=N_INFORMATIVE,
+                               n_redundant=N_REDUNDANT,
+                               n_classes=N_CLASSES,
+                               random_state=RANDOM_STATE)
+
+    # Convert to DataFrame for easier handling (optional but good practice)
+    feature_names = [f'feature_{i+1}' for i in range(N_FEATURES)]
+    X_df = pd.DataFrame(X, columns=feature_names) # Renamed to avoid conflict
+    original_feature_names = X_df.columns
+    print("Synthetic data generated.")
+    print("Feature shape:", X_df.shape)
+    print("Target distribution:", np.bincount(y))
+
+    # Target labels for plotting
+    target_labels = [f'Class {i}' for i in range(N_CLASSES)]
+
+    # 2. Split and Scale Data
+    print("\nSplitting and scaling data...")
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_df, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+    )
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    print("Data split and scaled.")
+
+    # 3. Model Training & Evaluation (Before Feature Selection)
+    print("\n--- Training and Evaluating BEFORE Feature Selection ---")
+    log_reg_before = LogisticRegression(max_iter=MAX_ITER_LOGREG, random_state=RANDOM_STATE)
+    log_reg_before.fit(X_train_scaled, y_train)
+    y_pred_before = log_reg_before.predict(X_test_scaled)
+
+    accuracy_before = accuracy_score(y_test, y_pred_before)
+    conf_matrix_before = confusion_matrix(y_test, y_pred_before)
+    class_report_before = classification_report(y_test, y_pred_before, target_names=target_labels)
+
+    print(f"Accuracy: {accuracy_before:.4f}")
+    print("Confusion Matrix:\n", conf_matrix_before)
+    print("Classification Report:\n", class_report_before)
+    plot_confusion_matrix_display(conf_matrix_before, target_labels,
+                                  'CM Before FS (Synthetic)', "Blues")
+
+    # 4. Feature Selection using ANOVA
+    print(f"\n--- Performing ANOVA Feature Selection (Selecting top {K_FEATURES} features) ---")
+    selector = SelectKBest(score_func=f_classif, k=K_FEATURES)
+    # Fit on training data only
+    X_train_selected = selector.fit_transform(X_train_scaled, y_train)
+    # Transform test data using the fitted selector
+    X_test_selected = selector.transform(X_test_scaled)
+
+    # Get selected feature names
+    selected_indices = selector.get_support(indices=True)
+    selected_features = original_feature_names[selected_indices]
+    print(f"Selected Features ({K_FEATURES}):\n", selected_features.tolist())
+
+    # 5. Model Training & Evaluation (After Feature Selection)
+    print("\n--- Training and Evaluating AFTER Feature Selection ---")
+    log_reg_after = LogisticRegression(max_iter=MAX_ITER_LOGREG, random_state=RANDOM_STATE)
+    log_reg_after.fit(X_train_selected, y_train)
+    y_pred_after = log_reg_after.predict(X_test_selected)
+
+    accuracy_after = accuracy_score(y_test, y_pred_after)
+    conf_matrix_after = confusion_matrix(y_test, y_pred_after)
+    class_report_after = classification_report(y_test, y_pred_after, target_names=target_labels)
+
+    print(f"Accuracy: {accuracy_after:.4f}")
+    print("Confusion Matrix:\n", conf_matrix_after)
+    print("Classification Report:\n", class_report_after)
+    plot_confusion_matrix_display(conf_matrix_after, target_labels,
+                                   f'CM After FS, k={K_FEATURES} (Synthetic)', "Greens")
+
+    print("\n--- Processing Complete ---")
+
+                            </code></pre>
+                        </div>
+                        <div id="anova-2" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">ANOVA Feature Selection With Local Dataset</h3>
+                            <p class="mb-2 text-sm text-gray-500">Uses a local CSV ('breast-cancer.csv'), performs ANOVA feature selection, and compares Logistic Regression performance before/after.</p>
+                            <div class="install-command">
+                                <strong>Required Libraries:</strong> Pandas, NumPy, Seaborn, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install pandas numpy seaborn matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+# anova_local_csv.py
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os # To check file path
+
+# Scikit-learn imports
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, ConfusionMatrixDisplay
+
+# --- Configuration ---
+FILE_PATH = r"C:\Users\Disha\OneDrive\Desktop\ml practical\breast-cancer.csv" # !!! IMPORTANT: Change this to your file path !!!
+# FILE_PATH = 'breast-cancer.csv' # Alternative: place file in same directory as HTML
+TARGET_COLUMN = 'diagnosis'             # Name of the target variable column
+ID_COLUMN = 'id'                        # Name of ID column to drop (set to None if none)
+TEST_SIZE = 0.3
+RANDOM_STATE = 42
+MAX_ITER_LOGREG = 10000
+K_FEATURES = 10        # Number of top features to select
+
+# --- Helper Function for Plotting CM ---
+def plot_confusion_matrix_display(cm, display_labels, title, cmap):
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=display_labels)
+    fig, ax = plt.subplots(figsize=(6, 5))
+    disp.plot(cmap=cmap, ax=ax)
+    ax.set_title(title)
+    ax.grid(False)
+    plt.show()
+
+# --- Main Script ---
+if __name__ == "__main__":
+    print("="*60)
+    print("ANOVA Feature Selection using Local CSV")
+    print("="*60)
+
+    # 1. Load Data
+    if not os.path.exists(FILE_PATH):
+        print(f"Error: File not found at '{FILE_PATH}'. Please check the path.")
+        exit()
+    try:
+        print(f"Loading data from: {FILE_PATH}")
+        df = pd.read_csv(FILE_PATH)
+        print("Data loaded successfully.")
+        print("Columns:", df.columns.tolist())
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        exit()
+
+    # 2. Initial Data Preparation
+    try:
+        # Drop ID column if specified and exists
+        if ID_COLUMN and ID_COLUMN in df.columns:
+            df = df.drop(ID_COLUMN, axis=1)
+            print(f"Dropped column: '{ID_COLUMN}'")
+
+        # Separate features (X) and target (y)
+        if TARGET_COLUMN not in df.columns:
+             raise KeyError(f"Target column '{TARGET_COLUMN}' not found in the dataset.")
+        X = df.drop(TARGET_COLUMN, axis=1)
+        y_raw = df[TARGET_COLUMN]
+
+        # Handle potential non-numeric features (simple strategy: drop)
+        non_numeric_cols = X.select_dtypes(exclude=np.number).columns
+        if not non_numeric_cols.empty:
+            print(f"Warning: Found non-numeric feature columns: {non_numeric_cols.tolist()}. Dropping them.")
+            X = X.drop(non_numeric_cols, axis=1)
+
+        original_feature_names = X.columns # Store feature names before scaling
+
+        # Encode target variable (e.g., 'M'/'B' to 1/0)
+        le = LabelEncoder()
+        y = le.fit_transform(y_raw)
+        target_labels = le.classes_ # Get the original class names ('B', 'M')
+        print(f"Target variable '{TARGET_COLUMN}' encoded. Classes mapped: {dict(zip(le.classes_, le.transform(le.classes_)))}")
+        print(f"Display labels for plots: {target_labels}")
+
+    except KeyError as e:
+        print(f"Error: {e}")
+        exit()
+    except Exception as e:
+        print(f"Error during data preparation: {e}")
+        exit()
+
+    # 3. Split and Scale Data
+    print("\nSplitting and scaling data...")
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+    )
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    print("Data split and scaled.")
+
+    # 4. Model Training & Evaluation (Before Feature Selection)
+    print("\n--- Training and Evaluating BEFORE Feature Selection ---")
+    log_reg_before = LogisticRegression(max_iter=MAX_ITER_LOGREG, random_state=RANDOM_STATE)
+    log_reg_before.fit(X_train_scaled, y_train)
+    y_pred_before = log_reg_before.predict(X_test_scaled)
+
+    accuracy_before = accuracy_score(y_test, y_pred_before)
+    conf_matrix_before = confusion_matrix(y_test, y_pred_before)
+    class_report_before = classification_report(y_test, y_pred_before, target_names=target_labels)
+
+    print(f"Accuracy: {accuracy_before:.4f}")
+    print("Confusion Matrix:\n", conf_matrix_before)
+    print("Classification Report:\n", class_report_before)
+    plot_confusion_matrix_display(conf_matrix_before, target_labels,
+                                  'CM Before FS (Local CSV)', "Blues")
+
+    # 5. Feature Selection using ANOVA
+    print(f"\n--- Performing ANOVA Feature Selection (Selecting top {K_FEATURES} features) ---")
+    selector = SelectKBest(score_func=f_classif, k=K_FEATURES)
+    X_train_selected = selector.fit_transform(X_train_scaled, y_train)
+    X_test_selected = selector.transform(X_test_scaled)
+
+    # Get selected feature names
+    selected_indices = selector.get_support(indices=True)
+    selected_features = original_feature_names[selected_indices]
+    print(f"Selected Features ({K_FEATURES}):\n", selected_features.tolist())
+
+    # 6. Model Training & Evaluation (After Feature Selection)
+    print("\n--- Training and Evaluating AFTER Feature Selection ---")
+    log_reg_after = LogisticRegression(max_iter=MAX_ITER_LOGREG, random_state=RANDOM_STATE)
+    log_reg_after.fit(X_train_selected, y_train)
+    y_pred_after = log_reg_after.predict(X_test_selected)
+
+    accuracy_after = accuracy_score(y_test, y_pred_after)
+    conf_matrix_after = confusion_matrix(y_test, y_pred_after)
+    class_report_after = classification_report(y_test, y_pred_after, target_names=target_labels)
+
+    print(f"Accuracy: {accuracy_after:.4f}")
+    print("Confusion Matrix:\n", conf_matrix_after)
+    print("Classification Report:\n", class_report_after)
+    plot_confusion_matrix_display(conf_matrix_after, target_labels,
+                                  f'CM After FS, k={K_FEATURES} (Local CSV)', "Greens")
+
+    print("\n--- Processing Complete ---")
+
+                            </code></pre>
+                        </div>
+                        <div id="anova-3" class="tab-content">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">ANOVA Feature Selection With Online Dataset (Breast Cancer)</h3>
+                             <p class="mb-2 text-sm text-gray-500">Uses the Breast Cancer dataset from sklearn, performs ANOVA feature selection, and compares Logistic Regression performance.</p>
+                             <div class="install-command">
+                                <strong>Required Libraries:</strong> Pandas, NumPy, Seaborn, Matplotlib, Scikit-learn<br>
+                                <strong>Run in terminal:</strong> <code>pip install pandas numpy seaborn matplotlib scikit-learn</code>
+                            </div>
+                            <pre><code class="language-python">
+# anova_online_cancer.py
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Scikit-learn imports
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, ConfusionMatrixDisplay
+from sklearn.datasets import load_breast_cancer
+
+# --- Configuration ---
+TEST_SIZE = 0.3
+RANDOM_STATE = 42
+MAX_ITER_LOGREG = 10000
+K_FEATURES = 10        # Number of top features to select
+
+# --- Helper Function for Plotting CM ---
+def plot_confusion_matrix_display(cm, display_labels, title, cmap):
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=display_labels)
+    fig, ax = plt.subplots(figsize=(6, 5))
+    disp.plot(cmap=cmap, ax=ax)
+    ax.set_title(title)
+    ax.grid(False)
+    plt.show()
+
+# --- Main Script ---
+if __name__ == "__main__":
+    print("="*60)
+    print("ANOVA Feature Selection using Sklearn Online Dataset (Breast Cancer)")
+    print("="*60)
+
+    # 1. Load Data
+    print("Loading Breast Cancer dataset from scikit-learn...")
+    cancer = load_breast_cancer()
+    X = pd.DataFrame(cancer.data, columns=cancer.feature_names)
+    y = cancer.target # 0: Malignant, 1: Benign
+    original_feature_names = X.columns
+    target_labels = cancer.target_names # ['malignant', 'benign']
+    print("Dataset loaded.")
+    print("Feature shape:", X.shape)
+    print("Target names:", target_labels)
+    print("Target distribution:", np.bincount(y))
+
+
+    # 2. Split and Scale Data
+    print("\nSplitting and scaling data...")
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+    )
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    print("Data split and scaled.")
+
+    # 3. Model Training & Evaluation (Before Feature Selection)
+    print("\n--- Training and Evaluating BEFORE Feature Selection ---")
+    log_reg_before = LogisticRegression(max_iter=MAX_ITER_LOGREG, random_state=RANDOM_STATE)
+    log_reg_before.fit(X_train_scaled, y_train)
+    y_pred_before = log_reg_before.predict(X_test_scaled)
+
+    accuracy_before = accuracy_score(y_test, y_pred_before)
+    conf_matrix_before = confusion_matrix(y_test, y_pred_before)
+    class_report_before = classification_report(y_test, y_pred_before, target_names=target_labels)
+
+    print(f"Accuracy: {accuracy_before:.4f}")
+    print("Confusion Matrix:\n", conf_matrix_before)
+    print("Classification Report:\n", class_report_before)
+    plot_confusion_matrix_display(conf_matrix_before, target_labels,
+                                   'CM Before FS (Online Data)', "Blues")
+
+    # 4. Feature Selection using ANOVA
+    print(f"\n--- Performing ANOVA Feature Selection (Selecting top {K_FEATURES} features) ---")
+    selector = SelectKBest(score_func=f_classif, k=K_FEATURES)
+    X_train_selected = selector.fit_transform(X_train_scaled, y_train)
+    X_test_selected = selector.transform(X_test_scaled)
+
+    # Get selected feature names
+    selected_indices = selector.get_support(indices=True)
+    selected_features = original_feature_names[selected_indices]
+    print(f"Selected Features ({K_FEATURES}):\n", selected_features.tolist())
+
+    # 5. Model Training & Evaluation (After Feature Selection)
+    print("\n--- Training and Evaluating AFTER Feature Selection ---")
+    log_reg_after = LogisticRegression(max_iter=MAX_ITER_LOGREG, random_state=RANDOM_STATE)
+    log_reg_after.fit(X_train_selected, y_train)
+    y_pred_after = log_reg_after.predict(X_test_selected)
+
+    accuracy_after = accuracy_score(y_test, y_pred_after)
+    conf_matrix_after = confusion_matrix(y_test, y_pred_after)
+    class_report_after = classification_report(y_test, y_pred_after, target_names=target_labels)
+
+    print(f"Accuracy: {accuracy_after:.4f}")
+    print("Confusion Matrix:\n", conf_matrix_after)
+    print("Classification Report:\n", class_report_after)
+    plot_confusion_matrix_display(conf_matrix_after, target_labels,
+                                   f'CM After FS, k={K_FEATURES} (Online Data)', "Greens")
+
+    print("\n--- Processing Complete ---")
+
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- Close main content container -->
+    </main>
+
+    <footer class="text-center p-4 text-gray-500 text-sm">
+        ML Practicals - Disha
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Highlight.js
+            hljs.highlightAll();
+
+            const topicButtons = document.querySelectorAll('.topic-btn');
+            const topicContents = document.querySelectorAll('.topic-content');
+
+            // Function to activate a topic
+            function activateTopic(topicId) {
+                // Deactivate all topics
+                topicButtons.forEach(btn => btn.classList.remove('active'));
+                topicContents.forEach(content => content.classList.remove('active'));
+
+                // Activate the selected topic
+                const topicButton = document.querySelector(`.topic-btn[data-topic="${topicId}"]`);
+                const topicContent = document.getElementById(topicId);
+
+                if (topicButton && topicContent) {
+                    topicButton.classList.add('active');
+                    topicContent.classList.add('active');
+
+                    // Activate the first tab within the newly activated topic
+                    const firstTabButton = topicContent.querySelector('.tab-btn');
+                    if (firstTabButton) {
+                        activateTab(topicContent, firstTabButton.getAttribute('data-tab'));
+                    }
+                } else {
+                     console.error(`Topic button or content not found for ID: ${topicId}`);
+                }
+            }
+
+            // Function to activate a tab within a specific topic
+            function activateTab(topicElement, tabId) {
+                const tabButtons = topicElement.querySelectorAll('.tab-btn');
+                const tabContents = topicElement.querySelectorAll('.tab-content');
+
+                // Deactivate all tabs within this topic
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Activate the selected tab
+                const tabButton = topicElement.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+                 // Important: Get tab content *within the specific topicElement* using the correct ID
+                const tabContent = topicElement.querySelector(`#${tabId}.tab-content`);
+
+
+                if (tabButton && tabContent) {
+                    tabButton.classList.add('active');
+                    tabContent.classList.add('active');
+                } else {
+                     console.error(`Tab button or content not found for ID: ${tabId} within topic ${topicElement.id}`);
+                     // Log available elements for debugging
+                     console.log("Available tab buttons:", Array.from(tabButtons).map(b => b.getAttribute('data-tab')));
+                     console.log("Available tab contents:", Array.from(tabContents).map(c => c.id));
+                }
+            }
+
+            // Add event listeners to topic buttons
+            topicButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const topicId = button.getAttribute('data-topic');
+                    activateTopic(topicId);
+                });
+            });
+
+            // Add event listeners to tab buttons (needs to consider parent topic)
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    // Find the parent topic content div
+                    const parentTopic = button.closest('.topic-content');
+                    if (parentTopic) {
+                         activateTab(parentTopic, tabId);
+                    } else {
+                        console.error("Could not find parent topic for tab button:", button);
+                    }
+                });
+            });
+
+            // Activate the first topic by default on page load
+            const firstTopicButton = document.querySelector('.topic-btn');
+            if (firstTopicButton) {
+                activateTopic(firstTopicButton.getAttribute('data-topic'));
+            }
+        });
+    </script>
+
+</body>
+</html>
