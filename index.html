@@ -223,66 +223,95 @@ else:
                                 <strong>Run in terminal:</strong> <code>pip install pandas numpy matplotlib scikit-learn</code>
                             </div>
                             <pre><code class="language-python">
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
+import seaborn as sns
+import pandas as pd # Still useful for inspection and plotting
+
+# --- 1. Load Data ---
+# Import the load_iris function directly from sklearn.datasets
+from sklearn.datasets import load_iris
+
+# Import necessary sklearn components
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
-# Using a dataset readily available in scikit-learn
-from sklearn.datasets import fetch_california_housing
+from sklearn.linear_model import LogisticRegression # Using Logistic Regression for classification
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
-# Load the California Housing dataset
-print("Loading California Housing dataset from scikit-learn...")
-housing = fetch_california_housing()
-df = pd.DataFrame(housing.data, columns=housing.feature_names)
-df['PRICE'] = housing.target # The target is median house value in $100,000s
+print("Loading Iris dataset directly from scikit-learn...")
+# Load the dataset. It returns a 'Bunch' object (like a dictionary)
+iris_data = load_iris()
+print("Dataset loaded successfully.")
 
-print("Dataset Info:")
-print(df.info())
-print("\nFirst 5 rows:")
+# --- 2. Prepare Data ---
+# The Bunch object contains data, target, feature names, target names, etc.
+X = iris_data.data  # Feature matrix (NumPy array)
+y = iris_data.target  # Target vector (NumPy array, already encoded as 0, 1, 2)
+feature_names = iris_data.feature_names # List of feature names
+target_names = iris_data.target_names   # List of target class names ('setosa', etc.)
+
+print(f"\nFeatures: {feature_names}")
+print(f"Target names: {target_names}")
+print(f"Shape of feature matrix X: {X.shape}")
+print(f"Shape of target vector y: {y.shape}")
+
+# Optional: Create a pandas DataFrame for easier viewing/plotting
+df = pd.DataFrame(X, columns=feature_names)
+# Map numeric target back to names for readability in the DataFrame
+df['species'] = pd.Categorical.from_codes(y, target_names)
+
+print("\nFirst 5 rows of DataFrame:")
 print(df.head())
-print(f"\nFeatures: {housing.feature_names}")
-print(f"Target: Median House Value")
+print("\nSpecies distribution:")
+print(df['species'].value_counts())
 
-# Select features and target
-# Let's use Median Income, Average Rooms, and House Age as features
-X = df[['MedInc', 'HouseAge', 'AveRooms']]
-y = df['PRICE']
-print("\nSelected Features: 'MedInc', 'HouseAge', 'AveRooms'")
 
-# Split data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# --- 3. Split Data ---
+# Target y is already numerical, so no extra encoding needed
+# Use stratify=y to maintain class proportions in train/test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y
+)
 print(f"\nData split: {len(X_train)} training samples, {len(X_test)} testing samples.")
 
-# Train the model
-model = LinearRegression()
+# --- 4. Train Model ---
+# Using Logistic Regression
+model = LogisticRegression(random_state=42, max_iter=200) # max_iter might be needed
 model.fit(X_train, y_train)
-print("\nModel trained.")
+print("\nClassification model (Logistic Regression) trained.")
 
-# Make predictions
+# --- 5. Make Predictions ---
 y_pred = model.predict(X_test)
 
-# Evaluate the model
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
+# --- 6. Evaluate Model ---
+accuracy = accuracy_score(y_test, y_pred)
+# Use target_names directly from the loaded dataset for labels
+conf_matrix = confusion_matrix(y_test, y_pred)
+class_report = classification_report(y_test, y_pred, target_names=target_names)
 
-print(f"\nCoefficients: {model.coef_}")
-print(f"Intercept: {model.intercept_:.4f}")
 print(f"\nModel Evaluation:")
-print(f"Mean Squared Error (MSE): {mse:.4f}")
-print(f"R-squared (R²) Score: {r2:.4f}")
+print(f"Accuracy: {accuracy:.4f}")
+print("\nConfusion Matrix:")
+# Display confusion matrix nicely using seaborn
+plt.figure(figsize=(6, 4))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
+            xticklabels=target_names, yticklabels=target_names)
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
 
-# Plot results: Actual vs Predicted
+print("\nClassification Report:")
+print(class_report)
+
+# --- 7. Visualize Data (Example: Sepal dimensions colored by species) ---
 plt.figure(figsize=(10, 6))
-plt.scatter(y_test, y_pred, alpha=0.5, edgecolors='k')
-# Add a line for perfect predictions
-plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2, label='Perfect Prediction')
-plt.xlabel('Actual House Prices ($100,000s)')
-plt.ylabel('Predicted House Prices ($100,000s)')
-plt.title('California Housing Prices: Actual vs Predicted')
-plt.legend()
-plt.grid(True)
+# Use the dataframe created earlier for easier plotting with seaborn
+sns.scatterplot(data=df, x='sepal length (cm)', y='sepal width (cm)', hue='species', palette='viridis', s=50, alpha=0.8)
+plt.title('Iris Dataset: Sepal Length vs Sepal Width by Species')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Sepal Width (cm)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend(title='Species')
 plt.tight_layout()
 plt.show()
                             </code></pre>
@@ -841,10 +870,13 @@ param_grid = {
 }
 
 # Create SVM classifier
-svc = svm.SVC(probability=True, random_state=42) # probability needed for some metrics/plots
+# Set probability=True if needed later (e.g., for probability scores), otherwise it's optional
+# It increases training time slightly.
+svc = svm.SVC(random_state=42) # Removed probability=True unless specifically needed
 
 # Instantiate GridSearchCV
 # cv=5 means 5-fold cross-validation
+# n_jobs=-1 uses all available CPU cores
 grid_search = GridSearchCV(svc, param_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=1)
 grid_search.fit(X_train_scaled, y_train)
 
@@ -870,10 +902,10 @@ print(classification_report(y_test, y_pred, target_names=iris.target_names))
 cm = confusion_matrix(y_test, y_pred)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=iris.target_names)
 print("\nConfusion Matrix:")
-print(cm)
+# print(cm) # Displaying the raw matrix is optional as the plot shows it
 
-plt.figure(figsize=(8, 6))
-disp.plot(cmap=plt.cm.Blues, ax=plt.gca()) # Use plt.gca()
+plt.figure(figsize=(7, 5)) # Adjusted size slightly
+disp.plot(cmap=plt.cm.Blues, ax=plt.gca(), colorbar=False) # Use plt.gca(), disable colorbar for typical CM plot
 plt.title('Confusion Matrix - Iris SVM Classification')
 plt.grid(False)
 plt.show()
@@ -881,40 +913,56 @@ plt.show()
 # --- Visualize decision boundary for two features (e.g., Sepal Length vs Sepal Width) ---
 print("\nVisualizing Decision Boundary using first two features (Sepal Length, Sepal Width)...")
 
-# Select only the first two features
+# Select only the first two features from the SCALED data
 X_train_2d = X_train_scaled[:, :2]
-X_test_2d = X_test_scaled[:, :2]
+# X_test_2d = X_test_scaled[:, :2] # Not needed for this plot unless plotting test points
 
 # Train a new SVM model using only these two features with the best parameters
-model_2d = svm.SVC(kernel=best_model.kernel, C=best_model.C, gamma=best_model.gamma, random_state=42)
-model_2d.fit(X_train_2d, y_train)
+# Ensure gamma is handled correctly ('scale'/'auto' need the data)
+gamma_val = best_model.gamma
+if gamma_val in ['scale', 'auto']:
+    # Create a temporary model to determine the actual gamma value if needed,
+    # or just pass 'scale'/'auto' if the SVC implementation handles it during prediction.
+    # For visualization consistency, it might be better to explicitly train with the 2D data.
+    pass # SVC should handle 'scale'/'auto' correctly based on the data it's fit on
 
-# Create meshgrid
-h = 0.02
-x_min, x_max = X_train_scaled[:, 0].min() - 1, X_train_scaled[:, 0].max() + 1
-y_min, y_max = X_train_scaled[:, 1].min() - 1, X_train_scaled[:, 1].max() + 1
+model_2d = svm.SVC(kernel=best_model.kernel, C=best_model.C, gamma=gamma_val, random_state=42)
+model_2d.fit(X_train_2d, y_train) # Fit on the 2D scaled training data
+
+# Create meshgrid using the range of the 2D scaled training data
+h = 0.02 # Step size in the mesh
+x_min, x_max = X_train_2d[:, 0].min() - 0.5, X_train_2d[:, 0].max() + 0.5 # Adjusted buffer
+y_min, y_max = X_train_2d[:, 1].min() - 0.5, X_train_2d[:, 1].max() + 0.5 # Adjusted buffer
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
-# Predict on meshgrid
+# Predict on meshgrid points
 Z = model_2d.predict(np.c_[xx.ravel(), yy.ravel()])
 Z = Z.reshape(xx.shape)
 
 # Plot decision boundary and data points
-plt.figure(figsize=(12, 8))
-plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
+plt.figure(figsize=(10, 7)) # Adjusted size
+# Use a perceptually uniform colormap if possible, e.g., 'viridis', 'plasma', 'inferno', 'magma', 'cividis'
+# Or a distinct one like 'Paired', 'Set1', 'Set2'
+plt.contourf(xx, yy, Z, alpha=0.4, cmap='viridis') # Using viridis for background
 
 # Plot training points (scaled)
 scatter = plt.scatter(X_train_2d[:, 0], X_train_2d[:, 1], c=y_train,
-                      cmap=plt.cm.coolwarm, edgecolors='k', s=60, label='Train Data')
-# Plot test points (scaled) - optional
-# plt.scatter(X_test_2d[:, 0], X_test_2d[:, 1], c=y_test,
-#             cmap=plt.cm.coolwarm, edgecolors='r', marker='X', s=100, label='Test Data')
+                      cmap='viridis', edgecolors='k', s=50) # Use same cmap for points
 
 plt.xlabel(f'{iris.feature_names[0]} (Scaled)')
 plt.ylabel(f'{iris.feature_names[1]} (Scaled)')
-plt.title(f'SVM Decision Boundary (Iris Dataset - Sepal Features)\n{best_model.kernel} kernel, C={best_model.C}, gamma={best_model.gamma}')
-plt.legend(handles=scatter.legend_elements()[0], labels=iris.target_names)
-plt.grid(True, linestyle='--', alpha=0.6)
+
+# Construct title dynamically, handling potential 'scale'/'auto' gamma
+gamma_display = best_model.gamma if isinstance(best_model.gamma, (int, float)) else f"'{best_model.gamma}'"
+plt.title(f'SVM Decision Boundary (Iris - Sepal Features)\n{best_model.kernel} kernel, C={best_model.C}, gamma={gamma_display}')
+
+# *** FIX: Convert iris.target_names (NumPy array) to a list for the labels argument ***
+legend_handles, _ = scatter.legend_elements() # Get handles correctly
+legend_labels = list(iris.target_names)       # Convert to list
+
+plt.legend(handles=legend_handles, labels=legend_labels, title="Species") # Add title to legend
+plt.grid(True, linestyle='--', alpha=0.5) # Slightly less opaque grid
+plt.tight_layout() # Adjust layout
 plt.show()
 
                             </code></pre>
